@@ -1,5 +1,10 @@
-{ config, lib, pkgs, ... }: with lib;
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib;
 let
   cfg = config.programs.aider;
 in

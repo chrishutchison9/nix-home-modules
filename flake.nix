@@ -3,7 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
-    systems.url = "github:nix-systems/x86_64-linux";
+    systems.url = "git+https://github.com/nix-systems/default?shallow=1";
+
     treefmt = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,7 +19,6 @@
     };
     utils = {
       url = "github:numtide/flake-utils";
-      inputs.systems.follows = "systems";
     };
   };
 
@@ -35,8 +35,10 @@
     {
       homeManagerModules = {
         aider = import ./aider.nix;
+        mutable = import ./mutable.nix;
       };
-    } // utils.lib.eachDefaultSystem (
+    }
+    // utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs { inherit system; };

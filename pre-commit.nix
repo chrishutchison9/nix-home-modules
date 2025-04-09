@@ -1,5 +1,7 @@
-{ pkgs, treefmt }:
-
+{
+  pkgs,
+  treefmt,
+}:
 {
   check-merge-conflicts.enable = true;
   check-added-large-files.enable = true;
@@ -28,5 +30,4 @@
 
   markdownlint.enable = true;
   typos.enable = true;
-
 }
