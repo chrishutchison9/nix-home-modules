@@ -35,6 +35,7 @@
     {
       homeManagerModules = {
         aider = import ./aider.nix;
+        chezmoi = import ./chezmoi.nix;
         mutable = import ./mutable.nix;
       };
     }
