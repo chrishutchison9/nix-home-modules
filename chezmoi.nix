@@ -4,11 +4,9 @@
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.chezmoi;
-in
-{
+in {
   # Options for chezmoi configuration
   options.chezmoi = {
     enable = mkEnableOption "chemzoi";
@@ -40,9 +38,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [ chezmoi ];
+    home.packages = with pkgs; [chezmoi];
 
-    home.activation.install-chezmoi = hm.dag.entryAfter [ "installPackages" ] ''
+    home.activation.install-chezmoi = hm.dag.entryAfter ["installPackages"] ''
       export PATH="${pkgs.git-lfs}/bin:${pkgs.gitFull}/bin:${pkgs.chezmoi}/bin:${pkgs.age}/bin:${pkgs.systemd}/bin:${pkgs.libsecret}/bin:$PATH"
       ./scripts/setup-configs.sh \
         "${cfg.url}" "${cfg.ref}" "${cfg.workspace}"

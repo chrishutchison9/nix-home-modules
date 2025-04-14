@@ -1,8 +1,7 @@
 {
   pkgs,
   treefmt,
-}:
-{
+}: {
   check-merge-conflicts.enable = true;
   check-added-large-files.enable = true;
   commitizen.enable = true;
@@ -11,7 +10,7 @@
     name = "gitleaks";
     enable = true;
     entry = "${pkgs.gitleaks}/bin/gitleaks detect";
-    stages = [ "pre-commit" ];
+    stages = ["pre-commit"];
   };
 
   treefmt = {
