@@ -494,11 +494,28 @@
         "type": "github"
       }
     },
+    "rooflow": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1744728639,
+        "narHash": "sha256-Z/AygmCx670tVG7iOTC8DPTR9DQZJhpZxJsqM2Cr1+A=",
+        "owner": "GreatScottyMac",
+        "repo": "RooFlow",
+        "rev": "135475b1b8c75c5c52aaedb060a2bec0bc2210b4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "GreatScottyMac",
+        "repo": "RooFlow",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "nix-checks": "nix-checks",
         "nixpkgs": "nixpkgs_8",
         "pre-commit": "pre-commit_4",
+        "rooflow": "rooflow",
         "systems": "systems_4",
         "treefmt": "treefmt_4",
         "utils": "utils_4"

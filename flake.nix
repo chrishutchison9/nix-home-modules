@@ -20,27 +20,35 @@
     utils = {
       url = "github:numtide/flake-utils";
     };
+    rooflow = {
+      url = "github:GreatScottyMac/RooFlow";
+      flake = false;
+    };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    utils,
-    pre-commit,
-    nix-checks,
-    treefmt,
-    ...
-  }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      utils,
+      pre-commit,
+      nix-checks,
+      treefmt,
+      ...
+    }:
     {
       homeManagerModules = {
         aider = import ./aider.nix;
         chezmoi = import ./chezmoi.nix;
+        codex-cli = import ./codex-cli.nix;
         mutable = import ./mutable.nix;
+        rooflow = import ./rooflow.nix;
       };
     }
     // utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = import nixpkgs {inherit system;};
+      system:
+      let
+        pkgs = import nixpkgs { inherit system; };
         treefmt-build = (treefmt.lib.evalModule pkgs ./treefmt.nix).config.build;
         pre-commit-check = pre-commit.lib.${system}.run {
           src = ./.;
@@ -50,7 +58,8 @@
           };
         };
         inherit (nix-checks.lib.${system}) checks;
-      in {
+      in
+      {
         checks = {
           # just check formatting is ok without changing anything
           formatting = treefmt-build.check self;
@@ -65,7 +74,8 @@
 
         devShells.default = pkgs.mkShell {
           inherit (pre-commit-check) shellHook;
-          buildInputs = with pkgs;
+          buildInputs =
+            with pkgs;
             pre-commit-check.enabledPackages
             ++ [
               nil
