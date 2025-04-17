@@ -188,6 +188,24 @@ in
       (lib.mkIf cfg.enableBoomerang {
         "${configDir}/settings/custom_modes.json".source = "${cfg.package}/custom_modes.json";
       })
+      # Provision Boomerang orchestrator mode files via home.file for each project directory
+      (lib.mkIf cfg.enableBoomerang
+        (lib.foldl' (acc: projectDir:
+          acc // {
+            # Orchestrator rules file
+            "${projectDir}/.roorules-boomerang".source = "${cfg.package}/config/global-boomerang-mode/.roorules-boomerang";
+            # Supporting role and instruction definitions
+            "${projectDir}/.roo/boomerang_role_definition.md".source = "${cfg.package}/config/global-boomerang-mode/boomerang_role_definition.md";
+            "${projectDir}/.roo/boomerang_custom_instructions.md".source = "${cfg.package}/config/global-boomerang-mode/boomerang_custom_instructions.md";
+            # Memory bank files (empty placeholders)
+            "${projectDir}/memory-bank/activeContext.md".text = "";
+            "${projectDir}/memory-bank/productContext.md".text = "";
+            "${projectDir}/memory-bank/progress.md".text = "";
+            "${projectDir}/memory-bank/decisionLog.md".text = "";
+            "${projectDir}/memory-bank/systemPatterns.md".text = "";
+          }
+        ) {} cfg.projectDirectories)
+      )
     ];
 
     home.activation.debugVariables = lib.hm.dag.entryBefore [ "installRooFlow" ] ''
@@ -214,58 +232,12 @@ in
       echo "RooFlow installation and configuration finished."
     '';
 
-    # Separate Boomerang mode setup as its own activation script
-    home.activation.setupBoomerangMode =
-      let
-        boomerangSetupBlock = lib.concatMapStringsSep "\n" (dir: ''
-          $DRY_RUN_CMD echo "Setting up Boomerang orchestrator mode in ${dir}..."
-
-          # Create temporary directory for Boomerang files
-          BOOMERANG_TEMP=$(mktemp -d)
-
-          # Copy the boomerang rules from the package source
-          $DRY_RUN_CMD cp "${cfg.package}/config/global-boomerang-mode/.roorules-boomerang" "$BOOMERANG_TEMP/"
-
-          # Copy the boomerang rules to project directory
-          $DRY_RUN_CMD cp "$BOOMERANG_TEMP/.roorules-boomerang" "${dir}/.roorules-boomerang"
-          $DRY_RUN_CMD chmod 644 "${dir}/.roorules-boomerang"
-
-          # Also copy supporting files for boomerang mode if they exist
-          if [ -f "${cfg.package}/config/global-boomerang-mode/boomerang_role_definition.md" ]; then
-            $DRY_RUN_CMD cp "${cfg.package}/config/global-boomerang-mode/boomerang_role_definition.md" "${dir}/.roo/"
-            $DRY_RUN_CMD chmod 644 "${dir}/.roo/boomerang_role_definition.md"
-          fi
-
-          if [ -f "${cfg.package}/config/global-boomerang-mode/boomerang_custom_instructions.md" ]; then
-            $DRY_RUN_CMD cp "${cfg.package}/config/global-boomerang-mode/boomerang_custom_instructions.md" "${dir}/.roo/"
-            $DRY_RUN_CMD chmod 644 "${dir}/.roo/boomerang_custom_instructions.md"
-          fi
-
-          # Create memory-bank directory for Boomerang if it doesn't exist
-          $DRY_RUN_CMD mkdir -p "${dir}/memory-bank"
-          $DRY_RUN_CMD chmod 755 "${dir}/memory-bank"
-
-          # Create essential memory bank files if they don't exist
-          for mbfile in activeContext.md productContext.md progress.md decisionLog.md systemPatterns.md; do
-            if [ ! -f "${dir}/memory-bank/$mbfile" ]; then
-              $DRY_RUN_CMD touch "${dir}/memory-bank/$mbfile"
-              $DRY_RUN_CMD chmod 644 "${dir}/memory-bank/$mbfile"
-            fi
-          done
-
-          # Clean up temporary files
-          $DRY_RUN_CMD chmod -R +w "$BOOMERANG_TEMP" || true
-          $DRY_RUN_CMD rm -rf "$BOOMERANG_TEMP" || true
-
-          $DRY_RUN_CMD echo "Boomerang task orchestration mode enabled for ${dir}"
-        '') cfg.projectDirectories;
-      in
-      lib.mkIf cfg.enableBoomerang (
-        lib.hm.dag.entryAfter [ "installRooFlow" ] ''
-          $DRY_RUN_CMD echo "Setting up Boomerang orchestrator mode..."
-          ${boomerangSetupBlock}
-        ''
-      );
+    # No setup activation needed: boomerang files provisioned via home.file
+    home.activation.setupBoomerangMode = lib.mkIf cfg.enableBoomerang (
+      lib.hm.dag.entryAfter [ "installRooFlow" ] ''
+        echo "Boomerang mode files provisioned via home.file"
+      ''
+    );
   };
 
   # Meta information for the RooFlow module
