@@ -41,6 +41,7 @@
         aider = import ./aider.nix;
         chezmoi = import ./chezmoi.nix;
         codex-cli = import ./codex-cli.nix;
+        roocode = import ./roocode.nix;
         mutable = import ./mutable.nix;
         rooflow = import ./rooflow.nix;
       };

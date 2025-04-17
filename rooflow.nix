@@ -154,7 +154,6 @@ in
       '';
     };
 
-
     package = lib.mkOption {
       type = lib.types.package;
       default = inputs.rooflow;
@@ -189,23 +188,23 @@ in
         "${configDir}/settings/custom_modes.json".source = "${cfg.package}/custom_modes.json";
       })
       # Provision Boomerang orchestrator mode files via home.file for each project directory
-      (lib.mkIf cfg.enableBoomerang
-        (lib.foldl' (acc: projectDir:
-          acc // {
+      (lib.mkIf cfg.enableBoomerang (
+        lib.foldl' (
+          acc: projectDir:
+          acc
+          // {
             # Orchestrator rules file
-            "${projectDir}/.roorules-boomerang".source = "${cfg.package}/config/global-boomerang-mode/.roorules-boomerang";
+            "${projectDir}/.roorules-boomerang".source =
+              "${cfg.package}/config/global-boomerang-mode/.roorules-boomerang";
             # Supporting role and instruction definitions
-            "${projectDir}/.roo/boomerang_role_definition.md".source = "${cfg.package}/config/global-boomerang-mode/boomerang_role_definition.md";
-            "${projectDir}/.roo/boomerang_custom_instructions.md".source = "${cfg.package}/config/global-boomerang-mode/boomerang_custom_instructions.md";
-            # Memory bank files (empty placeholders)
-            "${projectDir}/memory-bank/activeContext.md".text = "";
-            "${projectDir}/memory-bank/productContext.md".text = "";
-            "${projectDir}/memory-bank/progress.md".text = "";
-            "${projectDir}/memory-bank/decisionLog.md".text = "";
-            "${projectDir}/memory-bank/systemPatterns.md".text = "";
+            "${projectDir}/.roo/boomerang_role_definition.md".source =
+              "${cfg.package}/config/global-boomerang-mode/boomerang_role_definition.md";
+            "${projectDir}/.roo/boomerang_custom_instructions.md".source =
+              "${cfg.package}/config/global-boomerang-mode/boomerang_custom_instructions.md";
+            # No memory bank files here anymore; RooFlow will create them
           }
-        ) {} cfg.projectDirectories)
-      )
+        ) { } cfg.projectDirectories
+      ))
     ];
 
     home.activation.debugVariables = lib.hm.dag.entryBefore [ "installRooFlow" ] ''
@@ -238,11 +237,6 @@ in
         echo "Boomerang mode files provisioned via home.file"
       ''
     );
-  };
-
-  # Meta information for the RooFlow module
-  meta = with lib; {
-    description = "Home Manager module for installing and configuring RooFlow prompts";
   };
 
 }
