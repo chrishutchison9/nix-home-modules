@@ -59,13 +59,13 @@ in {
     home.file."${config.xdg.configHome}/codex/config.yaml" = {
       source = yamlFormat.generate "codex-cli-config.yaml"
         (let base = {
-            autoApprovalMode    = cfg.autoApprovalMode;
-            fullAutoErrorMode   = cfg.fullAutoErrorMode;
-            model               = cfg.model;
+            inherit (cfg) autoApprovalMode;
+            inherit (cfg) fullAutoErrorMode;
+            inherit (cfg) model;
           };
          in cfg.settings // base
              // (if cfg.memory then { memory = true; } else {})
-             // (if cfg.apiKey != "" then { apiKey = cfg.apiKey; } else {})
+             // (if cfg.apiKey != "" then { inherit (cfg) apiKey; } else {})
         );
     };
   };

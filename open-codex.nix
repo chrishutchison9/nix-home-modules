@@ -56,30 +56,26 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ cfg.package ];
-
-    # Create config directory
-    home.file.".codex/.keep".text = "";
-
-    # Create config file
-    home.file.".codex/config.json" = {
-      text = builtins.toJSON cfg.settings;
+    home = {
+      packages = [ cfg.package ];
+      file = {
+        ".codex/.keep".text = "";
+        ".codex/config.json" = {
+          text = builtins.toJSON cfg.settings;
+        };
+      };
+      sessionVariables = cfg.environmentVariables;
     };
-
-    # Set environment variables in profile
-    home.sessionVariables = cfg.environmentVariables;
-
-    # Add shell aliases for common operations with preferred approval mode
-    programs.bash.shellAliases = mkIf config.programs.bash.enable {
-      open-codex = "open-codex --approval-mode ${cfg.approvalMode}";
-    };
-
-    programs.zsh.shellAliases = mkIf config.programs.zsh.enable {
-      open-codex = "open-codex --approval-mode ${cfg.approvalMode}";
-    };
-
-    programs.fish.shellAliases = mkIf config.programs.fish.enable {
-      open-codex = "open-codex --approval-mode ${cfg.approvalMode}";
+    programs = {
+      bash.shellAliases = mkIf config.programs.bash.enable {
+        open-codex = "open-codex --approval-mode ${cfg.approvalMode}";
+      };
+      zsh.shellAliases = mkIf config.programs.zsh.enable {
+        open-codex = "open-codex --approval-mode ${cfg.approvalMode}";
+      };
+      fish.shellAliases = mkIf config.programs.fish.enable {
+        open-codex = "open-codex --approval-mode ${cfg.approvalMode}";
+      };
     };
   };
 }
