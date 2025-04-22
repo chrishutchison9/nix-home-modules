@@ -45,6 +45,7 @@
         roocode = import ./roo/roocode.nix;
         mutable = import ./mutable.nix;
         rooflow = import ./roo/rooflow.nix;
+        "roo-commander" = import ./roo/commander.nix;
       };
     }
     // utils.lib.eachDefaultSystem (
