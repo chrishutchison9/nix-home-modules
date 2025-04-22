@@ -42,9 +42,9 @@
         chezmoi = import ./chezmoi.nix;
         codex-cli = import ./codex-cli.nix;
         open-codex = import ./open-codex.nix;
-        roocode = import ./roocode.nix;
+        roocode = import ./roo/roocode.nix;
         mutable = import ./mutable.nix;
-        rooflow = import ./rooflow.nix;
+        rooflow = import ./roo/rooflow.nix;
       };
     }
     // utils.lib.eachDefaultSystem (
