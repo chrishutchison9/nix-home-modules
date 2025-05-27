@@ -53,7 +53,7 @@
         pkgs = import nixpkgs { inherit system; };
         treefmt-build = (treefmt.lib.evalModule pkgs ./treefmt.nix).config.build;
         pre-commit-check = pre-commit.lib.${system}.run {
-          src = ./.;
+          src = self;
           hooks = import ./pre-commit.nix {
             inherit pkgs;
             treefmt = treefmt-build.wrapper;
@@ -64,11 +64,11 @@
       {
         checks = {
           # just check formatting is ok without changing anything
-          formatting = treefmt-build.check self;
+          formatting = treefmt-build.check (builtins.path { path = ./.; name = "source"; });
 
-          statix = checks.statix ./.;
-          deadnix = checks.deadnix ./.;
-          flake-checker = checks.flake-checker ./.;
+          statix = checks.statix (builtins.path { path = ./.; name = "source"; });
+          deadnix = checks.deadnix (builtins.path { path = ./.; name = "source"; });
+          flake-checker = checks.flake-checker (builtins.path { path = ./.; name = "source"; });
         };
 
         # for `nix fmt`
